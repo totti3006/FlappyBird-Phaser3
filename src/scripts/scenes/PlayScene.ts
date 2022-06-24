@@ -147,13 +147,10 @@ class PlayScene extends Phaser.Scene {
   }
 
   hitPipe = (x, y): void => {
-    this.physics.world.disable(y)
+    console.log('hit pipe')
     this.ground.pause()
-
-    if (!this.bird.hitPipe) {
-      this.setEndGame()
-      this.bird.hitPipe = true
-    }
+    this.setEndGame()
+    this.bird.hitPipe = true
   }
 
   setEndGame(): void {
@@ -180,7 +177,9 @@ class PlayScene extends Phaser.Scene {
     let pipes = new Pipes(this)
     let pipeChild = pipes.getAll()
     let collidePipe = this.physics.add.collider(this.bird, pipeChild, (x, y) => {
-      this.hitPipe(x, y)
+      this.physics.world.removeCollider(collidePipe)
+      this.physics.world.disable(y)
+      if (!this.bird.hitPipe) this.hitPipe(x, y)
     }) // x is Bird, y is pipes
 
     this.time.addEvent({
