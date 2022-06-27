@@ -35,7 +35,13 @@ class Bird extends Phaser.GameObjects.Sprite {
 
     scene.physics.world.enable(this)
     scene.add.existing(this)
-    this.body.setMaxVelocityY(500)
+    this.body
+      .setMaxVelocityY(500)
+      .setBounceY(0)
+      .setCollideWorldBounds(true)
+      .setBoundsRectangle(
+        new Phaser.Geom.Rectangle(0, -10, this.scene.cameras.main.width, this.scene.cameras.main.height)
+      )
 
     this.setDepth(2).play('chill_flapping')
 

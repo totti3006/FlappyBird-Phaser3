@@ -18,7 +18,7 @@ class PauseScene extends Phaser.Scene {
     )
 
     this.input.once(
-      'pointerdown',
+      'pointerup',
       () => {
         this.scene.resume('PlayScene')
         this.resumeButton.setVisible(false)

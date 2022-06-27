@@ -2,7 +2,8 @@ const AUDIO = {
   bg: 'background',
   hit: 'hit',
   score: 'score',
-  flap: 'flap'
+  flap: 'flap',
+  button: 'button'
 }
 
 export default AUDIO

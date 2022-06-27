@@ -19,6 +19,7 @@ class PlayScene extends Phaser.Scene {
 
   private hitSound: Phaser.Sound.BaseSound
   private scoreSound: Phaser.Sound.BaseSound
+  // private buttonSound: Phaser.Sound.BaseSound
 
   private keys: any
   private timerPipe: Phaser.Time.TimerEvent
@@ -36,6 +37,7 @@ class PlayScene extends Phaser.Scene {
     this.load.audio(AUDIO.flap, 'assets/sound/audios_flappy.mp3')
     this.load.audio(AUDIO.hit, 'assets/sound/audios_collision.mp3')
     this.load.audio(AUDIO.score, 'assets/sound/audios_score.mp3')
+    // this.load.audio(AUDIO.button, 'assets/sound/button-30.mp3')
   }
 
   create(): void {
@@ -54,8 +56,14 @@ class PlayScene extends Phaser.Scene {
       .image(this.cameras.main.width / 2, 370, 'sprite', 'button/button-playgame')
       .setDepth(5)
       .setInteractive()
-      .on('pointerdown', pointer => {
+      .on('pointerup', pointer => {
         this.playGame()
+      })
+      .on('pointermove', pointer => {
+        this.playButton.setScale(1.05, 1.05).setTint(0xdcdcdc)
+      })
+      .on('pointerout', pointer => {
+        this.playButton.setScale(1, 1).clearTint()
       })
 
     this.pauseButton = this.add
@@ -63,9 +71,15 @@ class PlayScene extends Phaser.Scene {
       .setDepth(5)
       .setVisible(false)
       .setInteractive()
-      .on('pointerdown', pointer => {
+      .on('pointerup', pointer => {
         this.scene.pause()
         this.scene.launch('PauseScene')
+      })
+      .on('pointermove', pointer => {
+        this.pauseButton.setScale(1.05, 1.05)
+      })
+      .on('pointerout', pointer => {
+        this.pauseButton.setScale(1, 1)
       })
 
     this.bird.body.setSize(this.bird.width, this.bird.height * 0.9)
@@ -73,6 +87,7 @@ class PlayScene extends Phaser.Scene {
 
     this.hitSound = this.sound.add(AUDIO.hit)
     this.scoreSound = this.sound.add(AUDIO.score)
+    // this.buttonSound = this.sound.add(AUDIO.button)
 
     this.keys = this.input.keyboard.addKey('Space')
     this.keys.on('down', () => {
@@ -84,6 +99,8 @@ class PlayScene extends Phaser.Scene {
         }
       }
     })
+
+    this.cameras.main.fadeIn(250, 0, 0, 0)
   }
 
   playGame = (): void => {
@@ -92,9 +109,18 @@ class PlayScene extends Phaser.Scene {
 
     this.add.existing(this.score)
     this.title.setVisible(false)
-    this.getReady.setVisible(true)
+    this.getReady.setVisible(true).setAlpha(0)
     this.playButton.setVisible(false)
     this.pauseButton.setVisible(true)
+
+    this.tweens.add({
+      targets: this.getReady,
+      props: {
+        alpha: 1
+      },
+      duration: 300,
+      repeat: false
+    })
 
     this.input.mouse.disableContextMenu()
     this.input.on('pointerdown', pointer => {
@@ -118,7 +144,14 @@ class PlayScene extends Phaser.Scene {
     this.time.addEvent({
       delay: 2000,
       callback: () => {
-        this.getReady.setVisible(false)
+        this.tweens.add({
+          targets: this.getReady,
+          props: {
+            alpha: 0
+          },
+          duration: 300,
+          repeat: false
+        })
       },
       callbackScope: this,
       loop: false
@@ -142,12 +175,26 @@ class PlayScene extends Phaser.Scene {
 
     if (!this.bird.hitPipe) this.setEndGame()
 
-    this.scene.launch('GameOverScene', { playerScore: this.score.getScore() })
-    // this.scene.wake('GameOverScene')
+    if (this.bird.angle < 90) {
+      let dieTween = this.tweens.add({
+        targets: this.bird,
+        props: {
+          angle: 90
+        },
+        duration: 200,
+        loop: false,
+        onComplete: () => {
+          dieTween.stop()
+        }
+      })
+    }
+
+    this.time.delayedCall(500, () => {
+      this.scene.launch('GameOverScene', { playerScore: this.score.getScore() })
+    })
   }
 
   hitPipe = (x, y): void => {
-    console.log('hit pipe')
     this.ground.pause()
     this.setEndGame()
     this.bird.hitPipe = true
