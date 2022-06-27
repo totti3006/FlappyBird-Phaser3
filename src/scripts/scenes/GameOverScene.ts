@@ -7,6 +7,7 @@ class GameOverScene extends Phaser.Scene {
   private newHighScore: Phaser.GameObjects.Image
   private score: Score
   private highScore: Score
+  private playerStore: number = 0
 
   private keys: any
 
@@ -26,15 +27,9 @@ class GameOverScene extends Phaser.Scene {
     this.score = new Score(this, 20, this.cameras.main.width - 65, this.cameras.main.height / 2 - 15)
     this.highScore = new Score(this, 20, this.cameras.main.width - 65, this.cameras.main.height / 2 + 27)
 
-    this.score.setScore(data.playerScore)
+    this.playerStore = data.playerScore
 
-    if (data.playerScore > this.highScore.getScore()) {
-      this.highScore.setScore(data.playerScore)
-      this.saveHighScore(this.highScore.getScore())
-      this.newHighScore.setVisible(true)
-    } else {
-      this.highScore.setScore(this.getHighScore())
-    }
+    this.handleScore(this.playerStore)
 
     this.add.existing(this.score)
     this.add.existing(this.highScore)
@@ -53,8 +48,24 @@ class GameOverScene extends Phaser.Scene {
     })
   }
 
+  handleScore(score: number): void {
+    this.score.setScore(score)
+
+    if (localStorage.getItem('highScore') === null) {
+      this.saveHighScore(score)
+    } else {
+      if (score > this.getHighScore()) {
+        this.saveHighScore(score)
+      } else {
+        this.highScore.setScore(this.getHighScore())
+      }
+    }
+  }
+
   saveHighScore(score: number): void {
     localStorage.setItem('highScore', score.toString())
+    this.highScore.setScore(score)
+    this.newHighScore.setVisible(true)
   }
 
   getHighScore(): number {
