@@ -43,7 +43,7 @@ class Bird extends Phaser.GameObjects.Sprite {
         new Phaser.Geom.Rectangle(0, -10, this.scene.cameras.main.width, this.scene.cameras.main.height)
       )
 
-    this.setDepth(2).play('chill_flapping')
+    this.setDepth(6).play('chill_flapping')
 
     this.flapSound = this.scene.sound.add(AUDIO.flap)
   }
@@ -77,6 +77,22 @@ class Bird extends Phaser.GameObjects.Sprite {
       duration: 150,
       ease: 'Power0'
     })
+  }
+
+  public setDie(): void {
+    if (this.angle < 90) {
+      let dieTween = this.scene.tweens.add({
+        targets: this,
+        props: {
+          angle: 90
+        },
+        duration: 200,
+        loop: false,
+        onComplete: () => {
+          dieTween.stop()
+        }
+      })
+    }
   }
 
   protected preUpdate(time: number, delta: number): void {

@@ -4,21 +4,23 @@ import * as setting from '../../constants/settings'
 class Ground extends Phaser.GameObjects.Sprite {
   body: Phaser.Physics.Arcade.Body
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
-    // super(scene, x, y, IMG_NAME.ground)
-    super(scene, x, y, 'sprite', 'ground')
-    this.x = x
-    this.y = y
+  constructor(scene: Phaser.Scene) {
+    super(scene, 0, 0, 'sprite', 'ground')
+    this.x = 0
+    this.y = 400
     scene.physics.world.enable(this)
     scene.add.existing(this)
-    this.body.setGravityY(0).setVelocityX(-setting.GAME_SPEED)
+
+    let speed: number = setting.GAME_SPEED
+
+    this.body.setGravityY(0).setVelocityX(-speed)
 
     this.body.immovable = true
-    this.setDepth(3).play('ground')
+    this.setDepth(10).play('ground').setOrigin(0, 0)
   }
 
   update(): void {
-    if (this.x < setting.WIDTH / 2 - 24) this.setX(setting.WIDTH / 2 + 24)
+    if (this.x < -(this.width - this.scene.cameras.main.width)) this.setX(0)
   }
 
   pause(): void {

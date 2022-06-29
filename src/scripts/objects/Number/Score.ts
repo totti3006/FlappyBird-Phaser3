@@ -1,3 +1,22 @@
+// export class Score2 extends Phaser.GameObjects.Group {
+//   private scoreValue: number
+//   private fontSize: number
+
+//   constructor(scene: Phaser.Scene, fontSize: number, x: number, y: number) {
+//     super(scene)
+//     this.setXY(x, y).setDepth(5)
+
+//     this.addNum()
+//   }
+
+//   addNum(): void {
+//     for (let i = 0; i < 9; i++) {
+//       let digit = this.scene.add.image(0, 0, 'sprite', `digit/digit-${this.fontSize}-${i}`)
+//       this.add(digit, true)
+//     }
+//   }
+// }
+
 class Score extends Phaser.GameObjects.Container {
   private scoreValue: number
   private fontSize: number
