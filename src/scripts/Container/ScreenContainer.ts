@@ -96,6 +96,9 @@ class ScreenContainer extends Phaser.GameObjects.Container {
   endGame(): void {
     let pauseButton = this.getAt(3) as Phaser.GameObjects.Image
     pauseButton.setVisible(false)
+
+    let getReady = this.getAt(1) as Phaser.GameObjects.Image
+    getReady.setVisible(false)
   }
 }
 

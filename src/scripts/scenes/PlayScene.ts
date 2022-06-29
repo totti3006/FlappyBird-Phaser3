@@ -27,7 +27,8 @@ class PlayScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image(IMG_NAME.background, 'assets/img/bg_day.png')
+    this.load.image(IMG_NAME.bg_day, 'assets/img/bg_day.png')
+    this.load.image(IMG_NAME.bg_night, 'assets/img/bg_night.png')
 
     this.load.atlas('sprite', 'assets/img/flappy-bird-sprite.png', 'assets/img/flappy-bird-sprite.json')
 
@@ -40,7 +41,8 @@ class PlayScene extends Phaser.Scene {
     this.background = new Background(this, this.cameras.main.width / 2, this.cameras.main.height / 2)
     this.ground = new Ground(this)
     this.bird = new Bird(this, this.cameras.main.width / 3, this.cameras.main.height / 2)
-    this.score = new Score(this, 36, this.cameras.main.width / 2, 80)
+
+    this.score = new Score(this, 36, this.cameras.main.width / 2, 80, 'center')
 
     this.pipeGen = new PipeGenerator(this, this.bird, this.score, this.hitPipe)
 
@@ -64,7 +66,7 @@ class PlayScene extends Phaser.Scene {
     this.bird.idle = false
     this.bird.setPlay()
 
-    this.add.existing(this.score)
+    this.score.start()
 
     this.screenContainer.startGame()
   }
@@ -117,16 +119,16 @@ class PlayScene extends Phaser.Scene {
 
     this.cameras.main.flash()
 
-    this.pipeGen.stop()
-
     this.bird.anims.pause()
     this.bird.isDeath = true
 
-    this.score.setVisible(false)
+    this.score.destroy()
 
     this.screenContainer.endGame()
 
     this.time.removeAllEvents()
+
+    this.pipeGen.stop()
 
     this.input.removeAllListeners()
 

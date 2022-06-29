@@ -3,7 +3,8 @@ const IMG_NAME = {
   birdUp: 'birdUp',
   birdDown: 'birdDown',
   ground: 'ground',
-  background: 'background',
+  bg_day: 'background_day',
+  bg_night: 'background_night',
   gameOver: 'gameOver'
 }
 

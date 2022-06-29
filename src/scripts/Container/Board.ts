@@ -9,13 +9,8 @@ class Board extends Phaser.GameObjects.Container {
     let board = scene.add.image(0, 0, 'sprite', 'message/board')
     let newHighScore = scene.add.image(35, 8, 'sprite', 'message/message-new').setVisible(false)
 
-    let score = new Score(scene, 20, 80, -15)
-    let highScore = new Score(scene, 20, 80, 27)
-
     this.add(board)
       .add(newHighScore)
-      .add(score)
-      .add(highScore)
       .setPosition(scene.cameras.main.width / 2, scene.cameras.main.height / 2)
 
     let medal: Phaser.GameObjects.Image

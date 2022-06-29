@@ -21,6 +21,8 @@ class PipeGenerator {
 
   private callback
 
+  private pipesColor: string
+
   constructor(scene: Phaser.Scene, bird: Bird, score: Score, callback) {
     this.scene = scene
     this.bird = bird
@@ -31,6 +33,9 @@ class PipeGenerator {
     this.scoreSound = this.scene.sound.add(AUDIO.score)
 
     this.duration = ((this.scene.cameras.main.width + 160) / setting.GAME_SPEED) * 1000
+
+    let pipeColorList = ['green', 'brown']
+    this.pipesColor = pipeColorList[Phaser.Math.Between(0, 1)]
   }
 
   start(): void {
@@ -50,7 +55,7 @@ class PipeGenerator {
   }
 
   private pipeGen = (): void => {
-    let pipes = new Pipes(this.scene, this.duration)
+    let pipes = new Pipes(this.scene, this.duration, this.pipesColor)
     this.pipesList.push(pipes)
     let pipeChild = pipes.getAll()
 

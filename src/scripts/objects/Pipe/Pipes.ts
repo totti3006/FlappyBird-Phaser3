@@ -3,8 +3,8 @@ import * as setting from '../../constants/settings'
 class PipeUp extends Phaser.GameObjects.Sprite {
   body: Phaser.Physics.Arcade.Body
 
-  constructor(scene: Phaser.Scene) {
-    super(scene, 0, 0, 'sprite', 'pipe/green-pipe-up')
+  constructor(scene: Phaser.Scene, color: string) {
+    super(scene, 0, 0, 'sprite', `pipe/${color}-pipe-up`)
 
     this.setOrigin(0, 0).setPosition(0, 0)
 
@@ -18,8 +18,8 @@ class PipeUp extends Phaser.GameObjects.Sprite {
 class PipeDown extends Phaser.GameObjects.Sprite {
   body: Phaser.Physics.Arcade.Body
 
-  constructor(scene: Phaser.Scene) {
-    super(scene, 0, 0, 'sprite', 'pipe/green-pipe-down')
+  constructor(scene: Phaser.Scene, color: string) {
+    super(scene, 0, 0, 'sprite', `pipe/${color}-pipe-down`)
 
     this.setOrigin(0, 0).setPosition(0, -420)
 
@@ -44,15 +44,15 @@ class Pipes extends Phaser.GameObjects.Container {
 
   private duration: number
 
-  constructor(scene: Phaser.Scene, duration: number) {
+  constructor(scene: Phaser.Scene, duration: number, color: string) {
     super(scene)
 
     scene.add.existing(this)
 
     this.duration = duration
 
-    let pipeUp = new PipeUp(scene)
-    let pipeDown = new PipeDown(scene)
+    let pipeUp = new PipeUp(scene, color)
+    let pipeDown = new PipeDown(scene, color)
     let scoreZone = new ScoreZone(scene, 5, -420 + pipeDown.height, pipeDown.width - 5, 420 - pipeDown.height)
 
     this.add(pipeUp)

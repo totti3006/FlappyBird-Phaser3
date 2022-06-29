@@ -1,76 +1,124 @@
-// export class Score2 extends Phaser.GameObjects.Group {
-//   private scoreValue: number
-//   private fontSize: number
-
-//   constructor(scene: Phaser.Scene, fontSize: number, x: number, y: number) {
-//     super(scene)
-//     this.setXY(x, y).setDepth(5)
-
-//     this.addNum()
-//   }
-
-//   addNum(): void {
-//     for (let i = 0; i < 9; i++) {
-//       let digit = this.scene.add.image(0, 0, 'sprite', `digit/digit-${this.fontSize}-${i}`)
-//       this.add(digit, true)
-//     }
-//   }
-// }
-
-class Score extends Phaser.GameObjects.Container {
+class Score {
+  private scene: Phaser.Scene
   private scoreValue: number
   private fontSize: number
+  private scoreGroup: Phaser.GameObjects.Group
+  private x: number
+  private y: number
+  private align: string
 
-  private x_coor: number
-  private y_coor: number
+  constructor(scene: Phaser.Scene, fontSize: number, x: number, y: number, align: string = 'right') {
+    this.scene = scene
 
-  constructor(scene: Phaser.Scene, fontSize: number, x: number, y: number) {
-    super(scene)
-    this.scoreValue = 0
     this.fontSize = fontSize
 
-    this.x_coor = x
-    this.y_coor = y
+    this.scoreValue = 0
 
-    this.setDepth(5)
+    this.x = x
+    this.y = y
 
-    this.printScore()
+    this.align = align
+
+    this.scoreGroup = scene.add.group()
+
+    this.initScore()
   }
 
-  printScore(): void {
-    this.getAll().forEach(element => {
-      element.destroy()
-    })
+  private initScore(): void {
+    let offset: number = 0
+    for (let j = 0; j < 3; j++) {
+      for (let i = 0; i <= 9; i++) {
+        let digit = this.scene.add
+          .image(this.x, this.y, 'sprite', `digit/digit-${this.fontSize}-${i}`)
+          .setVisible(false)
 
-    let offset = 0
+        if (i == 0 && j == 0) {
+          offset = digit.width
+          // digit.setVisible(true)
+        }
 
-    this.scoreValue
-      .toString()
-      .split('')
-      .forEach(item => {
-        let digit = this.scene.add.image(offset, 0, 'sprite', `digit/digit-${this.fontSize}-${item}`)
-        this.add(digit)
-        offset += digit.width
-      })
+        digit.setX(this.x - j * offset).setDepth(5)
 
-    offset *= this.scale
-
-    if (this.fontSize == 36) this.setX(this.x_coor - offset / 2).setY(this.y_coor)
-    else if (this.fontSize == 20) this.setX(this.x_coor - offset / 2).setY(this.y_coor)
+        this.scoreGroup.add(digit)
+        this.scene.add.existing(digit)
+      }
+    }
   }
 
-  increaseScore = (): void => {
-    this.scoreValue += 1
-    this.printScore()
+  start(): void {
+    let digit = this.scoreGroup.getChildren() as Phaser.GameObjects.Image[]
+    digit[0].setVisible(true)
+  }
+
+  destroy(): void {
+    this.scoreGroup.setVisible(false)
   }
 
   getScore(): number {
     return this.scoreValue
   }
 
-  setScore(score: number) {
-    this.scoreValue = score
-    this.printScore()
+  setScore(score: number): void {
+    if (score > 0) {
+      this.scoreValue = score
+      this.updateDisplay()
+    } else {
+      this.start()
+    }
+  }
+
+  increaseScore(): void {
+    this.scoreValue++
+    this.updateDisplay()
+  }
+
+  private updateDisplay(): void {
+    // format number: abc
+    let a: number = Math.floor((this.scoreValue - 1) / 100) % 10
+    let b: number = Math.floor((this.scoreValue - 1) / 10) % 10
+    let c: number = (this.scoreValue - 1) % 10
+
+    let digit = this.scoreGroup.getChildren() as Phaser.GameObjects.Image[]
+
+    let a_index: number = 20 + a
+    let b_index: number = 10 + b
+    let c_index: number = c
+
+    digit[a_index].setVisible(false)
+    digit[b_index].setVisible(false)
+    digit[c_index].setVisible(false)
+
+    c_index++
+    if (c_index == 10) {
+      c_index = 0
+      b_index++
+      if (b_index == 20) {
+        b_index = 10
+        a_index++
+        if (a_index == 30) {
+          a_index = 20
+        }
+      }
+    }
+
+    if (a_index != 20) digit[a_index].setVisible(true)
+    if (a_index != 20 || b_index != 10) digit[b_index].setVisible(true)
+    digit[c_index].setVisible(true)
+
+    if (this.scoreValue == 10 || this.scoreValue == 100) {
+      if (this.align == 'center') this.alignCenter()
+      if (this.align == 'left') this.alignLeft()
+    }
+  }
+
+  private alignCenter(): void {
+    let digit = this.scoreGroup.getChildren() as Phaser.GameObjects.Image[]
+    Phaser.Actions.IncX(this.scoreGroup.getChildren(), digit[0].width / 2)
+  }
+
+  private alignLeft(): void {
+    let digit = this.scoreGroup.getChildren() as Phaser.GameObjects.Image[]
+    Phaser.Actions.IncX(this.scoreGroup.getChildren(), digit[0].width)
   }
 }
 

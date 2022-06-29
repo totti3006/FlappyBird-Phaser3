@@ -12,14 +12,19 @@ class Bird extends Phaser.GameObjects.Sprite {
   private flapSound: Phaser.Sound.BaseSound
   private chilling: Tweens.Tween
 
+  private color: string
+
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, 0, 0, '')
 
     this.setPosition(x, y)
 
+    let birdColorList = ['yellow', 'red', 'blue']
+    this.color = birdColorList[Phaser.Math.Between(0, 2)]
+
     this.anims.create({
       key: 'chill_flapping',
-      frames: this.anims.generateFrameNames('sprite', { prefix: 'bird/yellow-bird-', end: 2 }),
+      frames: this.anims.generateFrameNames('sprite', { prefix: `bird/${this.color}-bird-`, end: 2 }),
       frameRate: 8,
       repeat: -1
     })
@@ -53,7 +58,7 @@ class Bird extends Phaser.GameObjects.Sprite {
     this.anims.remove('chill_flapping')
     this.anims.create({
       key: 'rapid_flapping',
-      frames: this.anims.generateFrameNames('sprite', { prefix: 'bird/yellow-bird-', end: 2 }),
+      frames: this.anims.generateFrameNames('sprite', { prefix: `bird/${this.color}-bird-`, end: 2 }),
       frameRate: 16,
       repeat: -1
     })

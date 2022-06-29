@@ -8,6 +8,9 @@ class GameOverScene extends Phaser.Scene {
   private scoreBoard: Board
   private playerStore: number = 0
 
+  private score: Score
+  private highScore: Score
+
   private keys: any
 
   constructor() {
@@ -23,6 +26,10 @@ class GameOverScene extends Phaser.Scene {
 
     this.scoreBoard = new Board(this, this.playerStore)
     this.scoreBoard.setAlpha(0)
+
+    this.score = new Score(this, 20, this.cameras.main.width - 60, this.cameras.main.height / 2 - 15)
+
+    this.highScore = new Score(this, 20, this.cameras.main.width - 60, this.cameras.main.height / 2 + 27)
 
     this.tweens.add({
       targets: this.scoreBoard,
@@ -73,8 +80,7 @@ class GameOverScene extends Phaser.Scene {
   }
 
   handleScore(score: number): void {
-    let scoreObj = this.scoreBoard.getAt(2) as Score
-    scoreObj.setScore(score)
+    this.score.setScore(this.playerStore)
 
     if (localStorage.getItem('highScore') === null) {
       this.saveHighScore(score)
@@ -82,8 +88,7 @@ class GameOverScene extends Phaser.Scene {
       if (score > this.getHighScore()) {
         this.saveHighScore(score)
       } else {
-        let highScore = this.scoreBoard.getAt(3) as Score
-        highScore.setScore(this.getHighScore())
+        this.highScore.setScore(this.getHighScore())
       }
     }
   }
@@ -91,8 +96,7 @@ class GameOverScene extends Phaser.Scene {
   saveHighScore(score: number): void {
     localStorage.setItem('highScore', score.toString())
 
-    let highScore = this.scoreBoard.getAt(3) as Score
-    highScore.setScore(score)
+    this.highScore.setScore(score)
 
     let newHighScore = this.scoreBoard.getAt(1) as Phaser.GameObjects.Image
     newHighScore.setVisible(true)
