@@ -21,7 +21,7 @@ class PipeDown extends Phaser.GameObjects.Sprite {
   constructor(scene: Phaser.Scene, color: string) {
     super(scene, 0, 0, 'sprite', `pipe/${color}-pipe-down`)
 
-    this.setOrigin(0, 0).setPosition(0, -420)
+    this.setOrigin(0, 0).setPosition(0, -418)
 
     scene.physics.world.enable(this)
     this.body.setSize(this.width, this.height)
@@ -41,19 +41,23 @@ class ScoreZone extends Phaser.GameObjects.Rectangle {
 
 class Pipes extends Phaser.GameObjects.Container {
   public tween: Phaser.Tweens.Tween
+  public upDown: Phaser.Tweens.Tween
+
+  private merciless: boolean
 
   private duration: number
 
-  constructor(scene: Phaser.Scene, duration: number, color: string) {
+  constructor(scene: Phaser.Scene, duration: number, color: string, merciless: boolean = false) {
     super(scene)
 
     scene.add.existing(this)
 
     this.duration = duration
+    this.merciless = merciless
 
     let pipeUp = new PipeUp(scene, color)
     let pipeDown = new PipeDown(scene, color)
-    let scoreZone = new ScoreZone(scene, 5, -420 + pipeDown.height, pipeDown.width - 5, 420 - pipeDown.height)
+    let scoreZone = new ScoreZone(scene, 5, -418 + pipeDown.height, pipeDown.width - 5, 418 - pipeDown.height)
 
     this.add(pipeUp)
       .add(pipeDown)
@@ -65,6 +69,20 @@ class Pipes extends Phaser.GameObjects.Container {
   }
 
   move(): void {
+    if (this.merciless) {
+      let signs: number[] = [-1, 1]
+      let sign: number = signs[Phaser.Math.Between(0, 1)]
+      let up: number = Phaser.Math.Between(25, 35) * sign
+      let down: number = Phaser.Math.Between(25, 35) * sign * -1
+      this.upDown = this.scene.tweens.add({
+        targets: this,
+        y: { from: this.y + up, to: this.y + down },
+        duration: 900,
+        yoyo: true,
+        repeat: -1
+      })
+    }
+
     this.tween = this.scene.tweens.add({
       targets: this,
       x: -80,
@@ -72,6 +90,7 @@ class Pipes extends Phaser.GameObjects.Container {
       loop: 0,
       onComplete: () => {
         this.destroy()
+        this.upDown?.stop()
       }
     })
   }

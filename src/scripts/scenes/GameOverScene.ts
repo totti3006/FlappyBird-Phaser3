@@ -47,7 +47,7 @@ class GameOverScene extends Phaser.Scene {
       .setDepth(5)
       .setInteractive()
       .setVisible(false)
-      .on('pointerup', pointer => {
+      .once('pointerup', pointer => {
         this.cameras.main.fadeOut(250, 0, 0, 0)
       })
       .on('pointermove', pointer => {

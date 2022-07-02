@@ -12,6 +12,8 @@ class Bird extends Phaser.GameObjects.Sprite {
   private flapSound: Phaser.Sound.BaseSound
   private chilling: Tweens.Tween
 
+  public allowFly: boolean = true
+
   private color: string
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -40,15 +42,20 @@ class Bird extends Phaser.GameObjects.Sprite {
 
     scene.physics.world.enable(this)
     scene.add.existing(this)
+
+    this.setDepth(6).play('chill_flapping')
+
     this.body
+      .setOffset(5, 0)
       .setMaxVelocityY(500)
       .setBounceY(0)
       .setCollideWorldBounds(true)
+      // .setSize(this.width * 0.9, this.height * 0.9)
+      .setCircle((this.width * 0.7) / 2)
+
       .setBoundsRectangle(
         new Phaser.Geom.Rectangle(0, -10, this.scene.cameras.main.width, this.scene.cameras.main.height)
       )
-
-    this.setDepth(6).play('chill_flapping')
 
     this.flapSound = this.scene.sound.add(AUDIO.flap)
   }

@@ -1,5 +1,7 @@
+import Bird from '../objects/Bird/Bird'
+
 class ScreenContainer extends Phaser.GameObjects.Container {
-  constructor(scene: Phaser.Scene, playGame, switchToPause) {
+  constructor(scene: Phaser.Scene, bird: Bird, playGame, switchToPause) {
     super(scene)
 
     scene.add.existing(this)
@@ -47,9 +49,11 @@ class ScreenContainer extends Phaser.GameObjects.Container {
       })
       .on('pointermove', pointer => {
         pauseButton.setScale(1.05, 1.05)
+        bird.allowFly = false
       })
       .on('pointerout', pointer => {
         pauseButton.setScale(1, 1)
+        bird.allowFly = true
       })
 
     this.add(title).add(getReady).add(playButton).add(pauseButton).setPosition(0, 0).setDepth(5)

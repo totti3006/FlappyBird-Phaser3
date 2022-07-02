@@ -35,7 +35,7 @@ class LoadingScene extends Phaser.Scene {
     )
   }
 
-  create(): void {
+  update(): void {
     this.scene.start('PlayScene')
   }
 

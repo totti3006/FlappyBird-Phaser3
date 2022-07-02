@@ -18,6 +18,7 @@ class PipeGenerator {
   private duration: number
 
   private scoreSound: Phaser.Sound.BaseSound
+  private bgSound: Phaser.Sound.BaseSound
 
   private callback
 
@@ -31,6 +32,7 @@ class PipeGenerator {
     this.callback = callback
 
     this.scoreSound = this.scene.sound.add(AUDIO.score)
+    this.bgSound = this.scene.sound.add(AUDIO.bg)
 
     this.duration = ((this.scene.cameras.main.width + 160) / setting.GAME_SPEED) * 1000
 
@@ -55,7 +57,17 @@ class PipeGenerator {
   }
 
   private pipeGen = (): void => {
-    let pipes = new Pipes(this.scene, this.duration, this.pipesColor)
+    let merciless = false
+
+    if (this.score.getScore() >= 9) {
+      merciless = true
+    }
+
+    if (this.score.getScore() == 9) {
+      this.bgSound.play()
+    }
+
+    let pipes = new Pipes(this.scene, this.duration, this.pipesColor, merciless)
     this.pipesList.push(pipes)
     let pipeChild = pipes.getAll()
 
@@ -73,6 +85,7 @@ class PipeGenerator {
   }
 
   stop(): void {
+    this.bgSound.pause()
     this.pipesList.forEach(pipes => {
       pipes.tween.stop()
     })

@@ -20,7 +20,7 @@ class Ground extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    if (this.x < -(this.width - this.scene.cameras.main.width)) this.setX(0)
+    if (this.x <= -(this.width - this.scene.cameras.main.width)) this.setX(0)
   }
 
   pause(): void {

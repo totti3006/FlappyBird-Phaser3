@@ -35,6 +35,7 @@ class PlayScene extends Phaser.Scene {
     this.load.audio(AUDIO.flap, 'assets/sound/audios_flappy.mp3')
     this.load.audio(AUDIO.hit, 'assets/sound/audios_collision.mp3')
     this.load.audio(AUDIO.score, 'assets/sound/audios_score.mp3')
+    this.load.audio(AUDIO.bg, 'assets/sound/WhoCares.mp3')
   }
 
   create(): void {
@@ -46,9 +47,8 @@ class PlayScene extends Phaser.Scene {
 
     this.pipeGen = new PipeGenerator(this, this.bird, this.score, this.hitPipe)
 
-    this.screenContainer = new ScreenContainer(this, this.playGame, this.switchToPause)
+    this.screenContainer = new ScreenContainer(this, this.bird, this.playGame, this.switchToPause)
 
-    this.bird.body.setSize(this.bird.width * 0.9, this.bird.height * 0.9)
     this.physics.add.collider(this.bird, this.ground, this.hitGround)
 
     this.hitSound = this.sound.add(AUDIO.hit)
@@ -59,7 +59,7 @@ class PlayScene extends Phaser.Scene {
   }
 
   playGame = (): void => {
-    this.time.delayedCall(2000, () => {
+    this.time.delayedCall(3000, () => {
       this.pipeGen.start()
     })
 
@@ -84,8 +84,8 @@ class PlayScene extends Phaser.Scene {
     })
 
     this.input.mouse.disableContextMenu()
-    this.input.on('pointerdown', pointer => {
-      if (!this.bird.idle) {
+    this.input.setTopOnly(false).on('pointerdown', pointer => {
+      if (!this.bird.idle && this.bird.allowFly) {
         this.bird.jump()
       }
     })
