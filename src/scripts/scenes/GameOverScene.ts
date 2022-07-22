@@ -1,9 +1,10 @@
+import AnimatedButton from '../animations/AnimatedButton'
 import Board from '../Container/Board'
 import Score from '../objects/Number/Score'
 
 class GameOverScene extends Phaser.Scene {
   private gameOver: Phaser.GameObjects.Image
-  private playButton: Phaser.GameObjects.Image
+  private playButton: AnimatedButton
 
   private scoreBoard: Board
   private playerStore: number = 0
@@ -42,19 +43,17 @@ class GameOverScene extends Phaser.Scene {
 
     this.handleScore(this.playerStore)
 
-    this.playButton = this.add
-      .image(this.cameras.main.width / 2, 370, 'sprite', 'button/button-playgame')
+    this.playButton = new AnimatedButton(this, this.cameras.main.width / 2, 370, 'sprite', 'button/button-playgame')
+    this.playButton
+      .initButton(this.handleClickPlay)
       .setDepth(5)
       .setInteractive()
       .setVisible(false)
       .once('pointerup', pointer => {
-        this.cameras.main.fadeOut(250, 0, 0, 0)
+        this.playButton.playPointerUp()
       })
       .on('pointermove', pointer => {
-        this.playButton.setScale(1.05, 1.05).setTint(0xdcdcdc)
-      })
-      .on('pointerout', pointer => {
-        this.playButton.setScale(1, 1).clearTint()
+        this.playButton.playPointerMove()
       })
 
     this.time.delayedCall(500, () => {
@@ -62,6 +61,10 @@ class GameOverScene extends Phaser.Scene {
     })
 
     this.addInput()
+  }
+
+  private handleClickPlay = (): void => {
+    this.cameras.main.fadeOut(250, 0, 0, 0)
   }
 
   addInput(): void {

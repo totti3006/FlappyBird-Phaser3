@@ -5,7 +5,8 @@ const IMG_NAME = {
   ground: 'ground',
   bg_day: 'background_day',
   bg_night: 'background_night',
-  gameOver: 'gameOver'
+  gameOver: 'gameOver',
+  flappingDust: 'flappingDust'
 }
 
 export default IMG_NAME

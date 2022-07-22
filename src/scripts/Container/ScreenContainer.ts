@@ -1,6 +1,10 @@
+import AnimatedButton from '../animations/AnimatedButton'
 import Bird from '../objects/Bird/Bird'
 
 class ScreenContainer extends Phaser.GameObjects.Container {
+  private playButton: AnimatedButton
+  private pauseButton: AnimatedButton
+
   constructor(scene: Phaser.Scene, bird: Bird, playGame, switchToPause) {
     super(scene)
 
@@ -22,41 +26,45 @@ class ScreenContainer extends Phaser.GameObjects.Container {
     ///////////////////
     // Play Button
     ///////////////////
-    let playButton = this.scene.add
-      .image(scene.cameras.main.width / 2, 370, 'sprite', 'button/button-playgame')
-
+    this.playButton = new AnimatedButton(
+      this.scene,
+      scene.cameras.main.width / 2,
+      370,
+      'sprite',
+      'button/button-playgame'
+    )
+    this.playButton
+      .setScaleRatio(1.2)
+      .initButton(playGame)
       .setInteractive()
+      .playScale()
       .on('pointerup', pointer => {
-        playGame()
+        this.playButton.playPointerUp().stopScale()
       })
       .on('pointermove', pointer => {
-        playButton.setScale(1.05, 1.05).setTint(0xdcdcdc)
-      })
-      .on('pointerout', pointer => {
-        playButton.setScale(1, 1).clearTint()
+        this.playButton.playPointerMove()
       })
 
     ///////////////////
     // Pause Button
     ///////////////////
-    let pauseButton = this.scene.add
-      .image(30, 30, 'sprite', 'button/button-pause')
-
-      .setVisible(false)
+    this.pauseButton = new AnimatedButton(this.scene, 30, 30, 'sprite', 'button/button-pause')
+    this.pauseButton
+      .initButton(switchToPause)
       .setInteractive()
+      .setVisible(false)
       .on('pointerup', pointer => {
-        switchToPause()
+        // this.pauseButton.setVisible(false)
+        this.pauseButton.playPointerUp()
       })
       .on('pointermove', pointer => {
-        pauseButton.setScale(1.05, 1.05)
         bird.allowFly = false
       })
       .on('pointerout', pointer => {
-        pauseButton.setScale(1, 1)
         bird.allowFly = true
       })
 
-    this.add(title).add(getReady).add(playButton).add(pauseButton).setPosition(0, 0).setDepth(5)
+    this.add(title).add(getReady).add(this.playButton).add(this.pauseButton).setPosition(0, 0).setDepth(15)
   }
 
   startGame(): void {
@@ -95,6 +103,10 @@ class ScreenContainer extends Phaser.GameObjects.Container {
       callbackScope: this,
       loop: false
     })
+  }
+
+  public setPauseButtonVisible(value: boolean): void {
+    this.pauseButton.setVisible(value)
   }
 
   endGame(): void {

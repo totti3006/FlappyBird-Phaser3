@@ -6,7 +6,6 @@ import Bird from '../objects/Bird/Bird'
 import PipeGenerator from '../objects/Pipe/PipeGenerator'
 import Score from '../objects/Number/Score'
 import ScreenContainer from '../Container/ScreenContainer'
-import * as setting from '../constants/settings'
 
 class PlayScene extends Phaser.Scene {
   private ground: Ground
@@ -14,7 +13,7 @@ class PlayScene extends Phaser.Scene {
   private bird: Bird
   private score: Score
 
-  private screenContainer: ScreenContainer
+  public screenContainer: ScreenContainer
 
   private hitSound: Phaser.Sound.BaseSound
 
@@ -29,6 +28,7 @@ class PlayScene extends Phaser.Scene {
   preload(): void {
     this.load.image(IMG_NAME.bg_day, 'assets/img/bg_day.png')
     this.load.image(IMG_NAME.bg_night, 'assets/img/bg_night.png')
+    this.load.image(IMG_NAME.flappingDust, 'assets/img/DustParticle.png')
 
     this.load.atlas('sprite', 'assets/img/flappy-bird-sprite.png', 'assets/img/flappy-bird-sprite.json')
 
@@ -92,8 +92,9 @@ class PlayScene extends Phaser.Scene {
   }
 
   switchToPause = (): void => {
+    this.screenContainer.setPauseButtonVisible(false)
     this.scene.pause()
-    this.scene.launch('PauseScene')
+    this.scene.launch('PauseScene', { screenContainer: this.screenContainer })
   }
 
   hitGround = (): void => {
@@ -139,6 +140,10 @@ class PlayScene extends Phaser.Scene {
 
   update(time: number, delta: number): void {
     super.update(time, delta)
+
+    // if (this.scene.isActive() && !this.bird.idle) {
+    //   this.screenContainer.setPauseButtonVisible(true)
+    // }
 
     if (!this.bird.isDeath) {
       this.background.tilePositionX += 0.5

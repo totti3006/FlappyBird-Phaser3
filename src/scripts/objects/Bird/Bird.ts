@@ -1,6 +1,7 @@
 import { Physics, Tweens } from 'phaser'
 import IMG_NAME from '../../constants/imageName'
 import AUDIO from '../../constants/audioName'
+import DustAnimation from '../../animations/DustAnimation'
 
 class Bird extends Phaser.GameObjects.Sprite {
   body: Phaser.Physics.Arcade.Body
@@ -16,10 +17,14 @@ class Bird extends Phaser.GameObjects.Sprite {
 
   private color: string
 
+  private dustAnimation: DustAnimation
+
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, 0, 0, '')
 
     this.setPosition(x, y)
+
+    this.dustAnimation = new DustAnimation(this)
 
     let birdColorList = ['yellow', 'red', 'blue']
     this.color = birdColorList[Phaser.Math.Between(0, 2)]
@@ -46,12 +51,12 @@ class Bird extends Phaser.GameObjects.Sprite {
     this.setDepth(6).play('chill_flapping')
 
     this.body
-      .setOffset(5, 0)
+      .setOffset(4, -1)
       .setMaxVelocityY(500)
       .setBounceY(0)
       .setCollideWorldBounds(true)
       // .setSize(this.width * 0.9, this.height * 0.9)
-      .setCircle((this.width * 0.7) / 2)
+      .setCircle(this.width * 0.7 * 0.55)
 
       .setBoundsRectangle(
         new Phaser.Geom.Rectangle(0, -10, this.scene.cameras.main.width, this.scene.cameras.main.height)
@@ -76,6 +81,7 @@ class Bird extends Phaser.GameObjects.Sprite {
   }
 
   public jump(): void {
+    this.dustAnimation.playFly()
     this.flapSound.play()
     this.body.setVelocityY(-350).setGravityY(1200)
 
